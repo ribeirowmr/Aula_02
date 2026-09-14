@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Microsoft Entra ID · Simulação Wega</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/">
+        <span class="mark">E</span>
+        <span>Microsoft Entra ID</span>
+      </a>
+      <nav><span>Ambiente de desenvolvimento (AUTH_MODE=mock)</span></nav>
+    </header>
+    <main class="wrap">
+      <section class="hero" style="grid-template-columns: 1fr">
+        <div>
+          <div class="eyebrow">Provedor de identidade</div>
+          <h1>Escolha um colaborador para autenticar</h1>
+          <p class="lead">
+            Esta tela simula o Entra ID. Em produção, o usuário autentica com credenciais, MFA e
+            políticas da organização. O Auth Service nunca recebe a senha.
+          </p>
+        </div>
+      </section>
+      <div id="users" class="grid" style="margin-top: 24px"></div>
+    </main>
+    <script>
+      const state = new URLSearchParams(location.search).get("state");
+      async function load() {
+        const users = await fetch("/auth/mock/users").then((r) => r.json());
+        document.getElementById("users").innerHTML = users
+          .map(
+            (user) => `
+          <article class="card user">
+            <h3>${user.name}</h3>
+            <p class="muted">${user.email}</p>
+            <p class="muted">UO ${user.uo} · ${user.language}</p>
+            <div class="chips" style="margin:10px 0">
+              ${(user.groups.length ? user.groups : ["sem grupo"]).map((g) => `<span class="chip">${g}</span>`).join("")}
+            </div>
+            <form method="post" action="/auth/mock/complete">
+              <input type="hidden" name="state" value="${state ?? ""}" />
+              <input type="hidden" name="entraId" value="${user.entraId}" />
+              <button class="btn btn-primary" type="submit">Autenticar este usuário</button>
+            </form>
+          </article>`
+          )
+          .join("");
+      }
+      load();
+    </script>
+  </body>
+</html>

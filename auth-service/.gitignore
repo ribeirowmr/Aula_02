@@ -1,0 +1,12 @@
+# Auth Service
+
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+prisma/*.db
+prisma/*.db-journal
+keys/*.pem
+*.log
+.DS_Store

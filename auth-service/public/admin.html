@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administração · Auth Service Wega</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/">
+        <span class="mark">W</span>
+        <span>AUTH SERVICE · ADMIN</span>
+      </a>
+      <nav>
+        <a href="/">Intranet</a>
+        <a href="/admin">Painel</a>
+      </nav>
+    </header>
+    <main class="wrap">
+      <div id="denied" class="card hidden">
+        <h1>Acesso restrito</h1>
+        <p class="lead">Esta área exige a Role <b>AUTH-ADMIN</b>. Autentique-se com um administrador.</p>
+        <a class="btn btn-primary" id="login-link" href="/auth/login?client_id=intranet&redirect_uri=http://localhost:3000/app/callback">Entrar</a>
+      </div>
+      <div id="ok" class="hidden">
+        <section class="hero">
+          <div>
+            <div class="eyebrow">Autorização centralizada</div>
+            <h1>Grupos do Entra ID, Roles internas e permissões</h1>
+            <p class="lead">
+              O Entra ID identifica o usuário. O Auth Service decide o que cada Role pode fazer,
+              sem alterar a estrutura de grupos da Microsoft.
+            </p>
+          </div>
+          <aside class="panel">
+            <h3>Separação de responsabilidades</h3>
+            <ul>
+              <li>Entra ID: identidade, MFA, credenciais</li>
+              <li>Graph: grupos e atributos</li>
+              <li>Auth Service: roles, permissões, JWT, logs</li>
+            </ul>
+          </aside>
+        </section>
+        <div class="grid">
+          <article class="card">
+            <h3>Mapeamentos</h3>
+            <div id="mappings"></div>
+          </article>
+          <article class="card">
+            <h3>Usuários persistidos</h3>
+            <div id="users"></div>
+          </article>
+          <article class="card">
+            <h3>Auditoria</h3>
+            <div id="audit"></div>
+          </article>
+        </div>
+        <article class="card" style="margin-top:16px">
+          <h3>Roles e permissões</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>Aplicação</th>
+                <th>Grupo Entra</th>
+                <th>Permissões</th>
+              </tr>
+            </thead>
+            <tbody id="roles"></tbody>
+          </table>
+        </article>
+      </div>
+    </main>
+    <script src="/app.js"></script>
+    <script>
+      bootAdmin();
+    </script>
+  </body>
+</html>

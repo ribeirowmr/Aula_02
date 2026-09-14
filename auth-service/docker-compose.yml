@@ -1,0 +1,20 @@
+services:
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      AUTH_MODE: mock
+      PORT: 3000
+      DATABASE_URL: file:./prod.db
+      ISSUER: https://auth.wega.ind.br
+      PUBLIC_BASE_URL: https://auth.wega.ind.br
+      COOKIE_SECURE: "true"
+    volumes:
+      - auth-data:/app/prisma
+      - auth-keys:/app/keys
+
+volumes:
+  auth-data:
+  auth-keys:

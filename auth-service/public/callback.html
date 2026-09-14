@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Retorno da autenticação</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <article class="card">
+        <div class="eyebrow">Auth Service</div>
+        <h1>Validando retorno do Entra ID…</h1>
+        <p class="lead">Trocando o código de autorização pelo JWT interno.</p>
+        <div id="status" class="flash ok">Processando callback OAuth 2.0 / OIDC.</div>
+      </article>
+    </main>
+    <script src="/app.js"></script>
+    <script>
+      completeCallback();
+    </script>
+  </body>
+</html>

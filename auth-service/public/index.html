@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intranet Wega · Auth Service</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/">
+        <span class="mark">W</span>
+        <span>WEGA · INTRANET</span>
+      </a>
+      <nav>
+        <a href="/">Portal</a>
+        <a href="/admin">Administração</a>
+        <a href="/health">Health</a>
+      </nav>
+    </header>
+    <main class="wrap">
+      <section id="guest" class="hero">
+        <div>
+          <div class="eyebrow">Auth Service Wega</div>
+          <h1>Identidade no Microsoft Entra ID. Autorização centralizada na Wega.</h1>
+          <p class="lead">
+            A Intranet autentica o colaborador no Entra ID e o Auth Service mapeia grupos para Roles,
+            gerencia permissões e emite o JWT usado pelos sistemas internos.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" id="login-link" href="/auth/login?client_id=intranet&redirect_uri=http://localhost:3000/app/callback">
+              Entrar com Microsoft Entra ID
+            </a>
+            <a class="btn btn-ghost" href="/admin">Painel de autorização</a>
+          </div>
+        </div>
+        <aside class="panel">
+          <h3>Fluxo</h3>
+          <ol>
+            <li>Acesso à Intranet Wega</li>
+            <li>Redirecionamento ao Entra ID</li>
+            <li>Retorno em <code>/auth/redirect</code></li>
+            <li>Consulta ao Microsoft Graph</li>
+            <li>Mapeamento Grupo → Role → Permissões</li>
+            <li>Emissão do JWT interno</li>
+          </ol>
+        </aside>
+      </section>
+
+      <section id="session" class="hidden">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">Sessão autenticada</div>
+            <h1 id="hello">Olá</h1>
+            <p class="lead" id="session-lead"></p>
+            <div class="actions">
+              <a class="btn btn-ghost" href="/admin">Abrir administração</a>
+              <button class="btn btn-primary" id="logout">Encerrar sessão</button>
+            </div>
+          </div>
+          <aside class="panel">
+            <h3>Claims do JWT</h3>
+            <div class="chips" id="role-chips"></div>
+            <p class="muted" style="color:#d7deea">O token é assinado com RS256 e validado por iss, aud e exp.</p>
+          </aside>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <h3>Perfil interno</h3>
+            <div class="kv" id="profile"></div>
+          </article>
+          <article class="card">
+            <h3>Roles</h3>
+            <div class="chips" id="roles"></div>
+          </article>
+          <article class="card">
+            <h3>Permissões</h3>
+            <div class="chips" id="permissions"></div>
+          </article>
+        </div>
+        <article class="card" style="margin-top:16px">
+          <h3>JWT emitido pelo Auth Service</h3>
+          <pre id="jwt"></pre>
+        </article>
+      </section>
+      <p class="footer">Wega Motors · Microsoft Entra ID como IdP · Auth Service como autorização</p>
+    </main>
+    <script src="/app.js"></script>
+    <script>
+      bootHome();
+    </script>
+  </body>
+</html>

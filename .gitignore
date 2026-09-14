@@ -259,3 +259,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Auth Service
+auth-service/node_modules/
+auth-service/dist/
+auth-service/.env
+auth-service/prisma/*.db
+auth-service/prisma/*.db-journal
+auth-service/keys/*.pem

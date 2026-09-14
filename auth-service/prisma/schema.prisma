@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Application {
+  id           String   @id @default(cuid())
+  code         String   @unique
+  name         String
+  audience     String   @unique
+  description  String?
+  redirectUris String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  roles         Role[]
+  permissions   Permission[]
+  sessions      Session[]
+  auditLogs     AuditLog[]
+  authCodes     AuthorizationCode[]
+  oidcStates    OidcState[]
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  entraId            String    @unique
+  email              String    @unique
+  name               String
+  displayName        String?
+  department         String?
+  company            String?
+  country            String?
+  officeLocation     String?
+  preferredLanguage  String?
+  organizationalUnit String?
+  status             String    @default("ACTIVE")
+  lastAccessAt       DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  userRoles UserRole[]
+  sessions  Session[]
+  auditLogs AuditLog[]
+}
+
+model Role {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  name          String
+  description   String?
+  applicationId String
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  application   Application         @relation(fields: [applicationId], references: [id])
+  permissions   RolePermission[]
+  groupMappings EntraGroupMapping[]
+  userRoles     UserRole[]
+}
+
+model Permission {
+  id            String   @id @default(cuid())
+  code          String
+  name          String
+  description   String?
+  applicationId String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  application Application      @relation(fields: [applicationId], references: [id])
+  roles       RolePermission[]
+
+  @@unique([applicationId, code])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model EntraGroupMapping {
+  id             String   @id @default(cuid())
+  entraGroupId   String?
+  entraGroupName String
+  roleId         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([entraGroupName, roleId])
+}
+
+model UserRole {
+  userId     String
+  roleId     String
+  source     String   @default("ENTRA_GROUP")
+  assignedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model Session {
+  id               String    @id @default(cuid())
+  userId           String
+  applicationId    String
+  refreshTokenHash String    @unique
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  ipAddress        String?
+  userAgent        String?
+  createdAt        DateTime  @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  application Application @relation(fields: [applicationId], references: [id])
+}
+
+model AuthorizationCode {
+  id            String    @id @default(cuid())
+  codeHash      String    @unique
+  userId        String
+  applicationId String
+  redirectUri   String
+  expiresAt     DateTime
+  consumedAt    DateTime?
+  createdAt     DateTime  @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  eventType     String
+  userId        String?
+  email         String?
+  applicationId String?
+  ipAddress     String?
+  userAgent     String?
+  success       Boolean  @default(true)
+  details       String?
+  createdAt     DateTime @default(now())
+
+  user        User?        @relation(fields: [userId], references: [id])
+  application Application? @relation(fields: [applicationId], references: [id])
+}
+
+model OidcState {
+  id            String   @id @default(cuid())
+  state         String   @unique
+  nonce         String
+  codeVerifier  String
+  applicationId String
+  redirectUri   String
+  appState      String?
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id])
+}
