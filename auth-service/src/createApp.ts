@@ -33,13 +33,16 @@ export function createApp(params: { env: AppEnv; prisma: PrismaClient; keys: Jwt
   app.set("trust proxy", 1);
   app.use(
     helmet({
+      hsts: env.NODE_ENV === "production",
       contentSecurityPolicy: {
+        useDefaults: true,
         directives: {
           defaultSrc: ["'self'"],
           styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
           fontSrc: ["'self'", "https://fonts.gstatic.com"],
           imgSrc: ["'self'", "data:"],
-          scriptSrc: ["'self'", "'unsafe-inline'"]
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          upgradeInsecureRequests: env.NODE_ENV === "production" ? [] : null
         }
       }
     })
