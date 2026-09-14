@@ -1,0 +1,27 @@
+name: Auth Service
+
+on:
+  push:
+    paths:
+      - "auth-service/**"
+      - ".github/workflows/auth-service.yml"
+  pull_request:
+    paths:
+      - "auth-service/**"
+      - ".github/workflows/auth-service.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: auth-service
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: auth-service/package-lock.json
+      - run: npm ci
+      - run: npm test
